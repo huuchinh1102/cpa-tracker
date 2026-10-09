@@ -1,3 +1,4 @@
+import TargetSetter from './components/TargetSetter';
 import { useState, useEffect } from 'react';
 import { GRADE_MAP } from './data/Subjects';
 import Login from './components/Login';
@@ -160,10 +161,6 @@ function App() {
             <SemesterList sortedSemesters={sortedSemesters} groupedBySemester={groupedBySemester} chartData={chartData} isSimulating={isSimulating} onDelete={handleDelete} />
           </div>
         )}
-<<<<<<< Updated upstream
-        {activeTab === 'gpa' && <Overview type="GPA" score={latestGPA} chartData={chartData} isSimulating={isSimulating} />}
-        {activeTab === 'cpa' && <Overview type="CPA" score={finalCPA} chartData={chartData} isSimulating={isSimulating} />}
-=======
         
         {activeTab === 'gpa' && (
           <div className="animate-fade-in">
@@ -177,7 +174,6 @@ function App() {
             <TargetSetter currentCPA={finalCPA} totalCredits={accCredits} />
           </div>
         )}
->>>>>>> Stashed changes
       </div>
     </div>
   );

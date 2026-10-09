@@ -41,12 +41,7 @@ export default function Overview({ type, score, chartData, isSimulating }) {
           <ResponsiveContainer width="100%" height="100%">
             <LineChart 
               data={chartData} 
-<<<<<<< Updated upstream
-              // Đã tăng bottom từ 5 lên 25 để tạo không gian trống phía dưới
               margin={{ top: 10, right: 30, left: 0, bottom: 25 }} 
-=======
-              margin={{ top: 10, right: 30, left: 0, bottom: 20 }} 
->>>>>>> Stashed changes
             >
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
               <XAxis 
@@ -74,14 +69,9 @@ export default function Overview({ type, score, chartData, isSimulating }) {
                 contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
               />
               <Legend 
-<<<<<<< Updated upstream
-                // Đẩy phần ghi chú (CPA Tích lũy) cách xa hẳn trục X
-                wrapperStyle={{ paddingTop: '20px' }} 
-=======
                 align="center" 
                 verticalAlign="bottom" 
                 wrapperStyle={{ paddingTop: '20px', paddingLeft: '30px' }} 
->>>>>>> Stashed changes
               />
               <Line 
                 // Đổi thành linear để đường kẻ thẳng tắp
