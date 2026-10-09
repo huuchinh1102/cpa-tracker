@@ -2,7 +2,6 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 
 export default function Overview({ type, score, chartData, isSimulating }) {
   
-  // Tính toán xếp loại học lực chuẩn Bách Khoa
   const getRanking = (s) => {
     if (s >= 3.6) return { text: 'Xuất sắc', color: 'bg-green-100 text-green-700 border-green-300' };
     if (s >= 3.2) return { text: 'Giỏi', color: 'bg-blue-100 text-blue-700 border-blue-300' };
@@ -15,7 +14,6 @@ export default function Overview({ type, score, chartData, isSimulating }) {
 
   return (
     <div className="space-y-6">
-      {/* Thẻ hiển thị Điểm và Xếp loại */}
       <div className={`p-8 rounded-2xl border-2 text-center shadow-sm transition-all ${
           isSimulating ? 'bg-orange-50 border-orange-200' : 'bg-blue-50 border-blue-100'
         }`}>
@@ -26,7 +24,6 @@ export default function Overview({ type, score, chartData, isSimulating }) {
           {score > 0 ? score.toFixed(2) : '0.00'}
         </div>
         
-        {/* Nút Badge hiển thị xếp loại */}
         {score > 0 && (
           <div className={`inline-block px-4 py-1.5 rounded-full border font-bold text-sm shadow-sm ${rank.color}`}>
             Xếp loại: {rank.text}
@@ -34,7 +31,6 @@ export default function Overview({ type, score, chartData, isSimulating }) {
         )}
       </div>
 
-      {/* Biểu đồ */}
       <div className="bg-white p-6 rounded-2xl border shadow-sm">
         <h3 className="text-lg font-bold text-gray-700 mb-6 text-center">Biểu đồ biến động {type}</h3>
         <div className="h-80 w-full">
@@ -63,11 +59,15 @@ export default function Overview({ type, score, chartData, isSimulating }) {
               <Tooltip 
                 contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
               />
+ feature/update-ui
               <Legend 
                 align="center" 
                 verticalAlign="bottom" 
                 wrapperStyle={{ paddingTop: '20px', paddingLeft: '30px' }} 
               />
+
+              <Legend wrapperStyle={{ paddingTop: '20px' }} />
+main
               <Line 
                 type="linear" 
                 dataKey={type} 

@@ -165,6 +165,10 @@ function App() {
           </div>
         )}
         
+ feature/update-ui
+
+        {/* Đã thêm bộ TargetSetter vào tab CPA */}
+ main
         {activeTab === 'cpa' && (
           <div className="animate-fade-in space-y-6">
             <Overview type="CPA" score={finalCPA} chartData={chartData} isSimulating={isSimulating} />
