@@ -6,10 +6,9 @@ export default function SemesterList({ sortedSemesters, groupedBySemester, chart
   return (
     <>
       {sortedSemesters.map(sem => {
-        // Tự động chèn dấu chấm vào giữa năm và số kỳ (vd: 20231 -> 2023.1)
+
         const formattedSem = sem.length === 5 ? `${sem.slice(0, 4)}.${sem.slice(4)}` : sem;
         
-        // Tìm đúng dữ liệu điểm của kỳ đã được format để tránh lỗi sập web
         const currentChartData = chartData.find(d => d.name === `Kỳ ${formattedSem}`);
 
         return (

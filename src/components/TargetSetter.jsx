@@ -12,7 +12,6 @@ export default function TargetSetter({ currentCPA, totalCredits }) {
     
     if (isNaN(target) || isNaN(credits) || credits <= 0) return null;
 
-    // Tính toán và LÀM TRÒN 2 chữ số để khắc phục lỗi sai số thập phân của JS
     const rawRequiredGPA = ((target * (totalCredits + credits)) - (currentCPA * totalCredits)) / credits;
     const roundedRequiredGPA = Number(rawRequiredGPA.toFixed(2));
     

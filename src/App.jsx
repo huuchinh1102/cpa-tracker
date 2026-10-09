@@ -20,7 +20,6 @@ function App() {
   const [simCourses, setSimCourses] = useState([]);
   const [activeTab, setActiveTab] = useState('input');
 
-  // 1. Tải dữ liệu 1 lần duy nhất khi đăng nhập, dọn dẹp sạch khi đăng xuất
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
@@ -34,7 +33,6 @@ function App() {
           setRealCourses([]);
         }
       } else {
-        // NGĂN CHẶN LỖI CHÉO ĐIỂM: Dọn dẹp RAM ngay khi Đăng xuất
         setUser(null);
         setRealCourses([]);
         setSimCourses([]);
@@ -97,7 +95,6 @@ function App() {
     });
     accCredits += semCredits; accPoints += semPoints;
     
-    // ĐỊNH DẠNG LẠI KỲ HỌC: Thêm dấu chấm giữa năm và số kỳ (vd: 20231 -> 2023.1)
     const formattedSem = sem.length === 5 ? `${sem.slice(0, 4)}.${sem.slice(4)}` : sem;
 
     return {

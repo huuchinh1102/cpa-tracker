@@ -48,21 +48,16 @@ export default function Overview({ type, score, chartData, isSimulating }) {
                 dataKey="name" 
                 axisLine={true} 
                 tickLine={false} 
-                // Đã in đậm trục ngang
                 tick={{fill: '#6B7280', fontSize: 12, fontWeight: 'bold'}} 
                 dy={10} 
               />
               <YAxis 
                 domain={[0, 4]} 
-                // Bổ sung các mốc 0.5
                 ticks={[0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4]} 
-                // Ép luôn hiển thị 1 chữ số thập phân (1.0, 2.0...)
                 tickFormatter={(val) => val.toFixed(1)} 
                 axisLine={false} 
                 tickLine={false} 
-                // Đã in đậm trục dọc
                 tick={{fill: '#6B7280', fontSize: 12, fontWeight: 'bold'}}
-                // Tăng độ rộng lề ra một chút để chứa các số thập phân
                 width={35}
               />
               <Tooltip 
@@ -74,7 +69,6 @@ export default function Overview({ type, score, chartData, isSimulating }) {
                 wrapperStyle={{ paddingTop: '20px', paddingLeft: '30px' }} 
               />
               <Line 
-                // Đổi thành linear để đường kẻ thẳng tắp
                 type="linear" 
                 dataKey={type} 
                 stroke="#DC2626" 

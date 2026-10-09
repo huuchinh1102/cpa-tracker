@@ -4,7 +4,7 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'fire
 
 export default function Login() {
   const [isRegistering, setIsRegistering] = useState(false);
-  const [studentId, setStudentId] = useState(''); // Đổi từ email thành studentId
+  const [studentId, setStudentId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
