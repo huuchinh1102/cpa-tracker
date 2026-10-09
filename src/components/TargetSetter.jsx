@@ -12,13 +12,9 @@ export default function TargetSetter({ currentCPA, totalCredits }) {
     
     if (isNaN(target) || isNaN(credits) || credits <= 0) return null;
 
-feature/update-ui
+    // Tính toán và LÀM TRÒN 2 chữ số để khắc phục lỗi sai số thập phân của JS (Đã được khôi phục)
     const rawRequiredGPA = ((target * (totalCredits + credits)) - (currentCPA * totalCredits)) / credits;
     const roundedRequiredGPA = Number(rawRequiredGPA.toFixed(2));
-
-    // Thuật toán tính ngược GPA cần thiết cho kỳ tới
-    const requiredGPA = ((target * (totalCredits + credits)) - (currentCPA * totalCredits)) / credits;
-main
     
     if (target <= currentCPA) {
       return { 
@@ -28,11 +24,7 @@ main
       };
     }
 
- feature/update-ui
     if (roundedRequiredGPA > 4.0) {
-
-    if (requiredGPA > 4.0) {
- main
       // Tính điểm tối đa có thể đạt được nếu kỳ tới full A
       const maxPossibleCPA = ((currentCPA * totalCredits) + (4.0 * credits)) / (totalCredits + credits);
       return { 
@@ -45,11 +37,7 @@ main
     return { 
       status: 'possible', 
       color: 'bg-blue-50 text-blue-700 border-blue-200',
- feature/update-ui
       message: `Khả thi! Với dự định học ${credits} tín chỉ kỳ tới, bạn cần đạt điểm tổng kết (GPA) học kỳ tối thiểu là ${roundedRequiredGPA.toFixed(2)} để kéo CPA lên ${target}.` 
-
-      message: `Khả thi! Với dự định học ${credits} tín chỉ kỳ tới, bạn cần đạt điểm tổng kết (GPA) học kỳ tối thiểu là ${requiredGPA.toFixed(2)} để kéo CPA lên ${target}.` 
- main
     };
   };
 
