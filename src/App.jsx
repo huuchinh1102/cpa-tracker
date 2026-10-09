@@ -20,7 +20,6 @@ function App() {
   const [simCourses, setSimCourses] = useState([]);
   const [activeTab, setActiveTab] = useState('input');
 
-  // 1. Tải dữ liệu 1 lần duy nhất khi đăng nhập, dọn dẹp sạch khi đăng xuất
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
@@ -34,7 +33,6 @@ function App() {
           setRealCourses([]);
         }
       } else {
-        // NGĂN CHẶN LỖI CHÉO ĐIỂM: Dọn dẹp RAM ngay khi Đăng xuất
         setUser(null);
         setRealCourses([]);
         setSimCourses([]);
@@ -96,8 +94,11 @@ function App() {
       semPoints += c.credits * GRADE_MAP[c.grade];
     });
     accCredits += semCredits; accPoints += semPoints;
+    
+    const formattedSem = sem.length === 5 ? `${sem.slice(0, 4)}.${sem.slice(4)}` : sem;
+
     return {
-      name: `Kỳ ${sem}`,
+      name: `Kỳ ${formattedSem}`,
       GPA: semCredits > 0 ? Number((semPoints / semCredits).toFixed(2)) : 0,
       CPA: accCredits > 0 ? Number((accPoints / accCredits).toFixed(2)) : 0
     };
@@ -164,7 +165,10 @@ function App() {
           </div>
         )}
         
+ feature/update-ui
+
         {/* Đã thêm bộ TargetSetter vào tab CPA */}
+ main
         {activeTab === 'cpa' && (
           <div className="animate-fade-in space-y-6">
             <Overview type="CPA" score={finalCPA} chartData={chartData} isSimulating={isSimulating} />

@@ -44,22 +44,32 @@ export default function Overview({ type, score, chartData, isSimulating }) {
                 dataKey="name" 
                 axisLine={true} 
                 tickLine={false} 
-                tick={{fill: '#6B7280', fontSize: 12}} 
+                tick={{fill: '#6B7280', fontSize: 12, fontWeight: 'bold'}} 
                 dy={10} 
               />
               <YAxis 
                 domain={[0, 4]} 
-                ticks={[0, 1, 2, 3, 4]} 
+                ticks={[0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4]} 
+                tickFormatter={(val) => val.toFixed(1)} 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{fill: '#6B7280', fontSize: 12}}
+                tick={{fill: '#6B7280', fontSize: 12, fontWeight: 'bold'}}
+                width={35}
               />
               <Tooltip 
                 contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
               />
+ feature/update-ui
+              <Legend 
+                align="center" 
+                verticalAlign="bottom" 
+                wrapperStyle={{ paddingTop: '20px', paddingLeft: '30px' }} 
+              />
+
               <Legend wrapperStyle={{ paddingTop: '20px' }} />
+main
               <Line 
-                type="monotone" 
+                type="linear" 
                 dataKey={type} 
                 stroke="#DC2626" 
                 strokeWidth={3}
