@@ -1,3 +1,4 @@
+import TargetSetter from './components/TargetSetter';
 import { useState, useEffect } from 'react';
 import { GRADE_MAP } from './data/Subjects';
 import Login from './components/Login';
@@ -156,8 +157,20 @@ function App() {
             <SemesterList sortedSemesters={sortedSemesters} groupedBySemester={groupedBySemester} chartData={chartData} isSimulating={isSimulating} onDelete={handleDelete} />
           </div>
         )}
-        {activeTab === 'gpa' && <Overview type="GPA" score={latestGPA} chartData={chartData} isSimulating={isSimulating} />}
-        {activeTab === 'cpa' && <Overview type="CPA" score={finalCPA} chartData={chartData} isSimulating={isSimulating} />}
+        
+        {activeTab === 'gpa' && (
+          <div className="animate-fade-in">
+             <Overview type="GPA" score={latestGPA} chartData={chartData} isSimulating={isSimulating} />
+          </div>
+        )}
+        
+        {/* Đã thêm bộ TargetSetter vào tab CPA */}
+        {activeTab === 'cpa' && (
+          <div className="animate-fade-in space-y-6">
+            <Overview type="CPA" score={finalCPA} chartData={chartData} isSimulating={isSimulating} />
+            <TargetSetter currentCPA={finalCPA} totalCredits={accCredits} />
+          </div>
+        )}
       </div>
     </div>
   );
