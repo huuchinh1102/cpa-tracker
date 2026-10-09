@@ -95,8 +95,12 @@ function App() {
       semPoints += c.credits * GRADE_MAP[c.grade];
     });
     accCredits += semCredits; accPoints += semPoints;
+    
+    // ĐỊNH DẠNG LẠI KỲ HỌC: Thêm dấu chấm giữa năm và số kỳ (vd: 20231 -> 2023.1)
+    const formattedSem = sem.length === 5 ? `${sem.slice(0, 4)}.${sem.slice(4)}` : sem;
+
     return {
-      name: `Kỳ ${sem}`,
+      name: `Kỳ ${formattedSem}`,
       GPA: semCredits > 0 ? Number((semPoints / semCredits).toFixed(2)) : 0,
       CPA: accCredits > 0 ? Number((accPoints / accCredits).toFixed(2)) : 0
     };
@@ -156,8 +160,24 @@ function App() {
             <SemesterList sortedSemesters={sortedSemesters} groupedBySemester={groupedBySemester} chartData={chartData} isSimulating={isSimulating} onDelete={handleDelete} />
           </div>
         )}
+<<<<<<< Updated upstream
         {activeTab === 'gpa' && <Overview type="GPA" score={latestGPA} chartData={chartData} isSimulating={isSimulating} />}
         {activeTab === 'cpa' && <Overview type="CPA" score={finalCPA} chartData={chartData} isSimulating={isSimulating} />}
+=======
+        
+        {activeTab === 'gpa' && (
+          <div className="animate-fade-in">
+             <Overview type="GPA" score={latestGPA} chartData={chartData} isSimulating={isSimulating} />
+          </div>
+        )}
+        
+        {activeTab === 'cpa' && (
+          <div className="animate-fade-in space-y-6">
+            <Overview type="CPA" score={finalCPA} chartData={chartData} isSimulating={isSimulating} />
+            <TargetSetter currentCPA={finalCPA} totalCredits={accCredits} />
+          </div>
+        )}
+>>>>>>> Stashed changes
       </div>
     </div>
   );
