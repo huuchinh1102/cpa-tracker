@@ -20,12 +20,10 @@ function App() {
   const [simCourses, setSimCourses] = useState([]);
   const [activeTab, setActiveTab] = useState('input');
 
-  // 1. Tải dữ liệu 1 lần duy nhất khi đăng nhập, dọn dẹp sạch khi đăng xuất
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        // Kéo dữ liệu từ Đám mây về
         const docRef = doc(db, 'users', currentUser.uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
@@ -34,13 +32,12 @@ function App() {
           setRealCourses([]);
         }
       } else {
-        // NGĂN CHẶN LỖI CHÉO ĐIỂM: Dọn dẹp RAM ngay khi Đăng xuất
         setUser(null);
         setRealCourses([]);
         setSimCourses([]);
         setIsSimulating(false);
       }
-      setIsDataLoaded(true); // Đánh dấu đã tải xong
+      setIsDataLoaded(true);
     });
     return () => unsubscribe();
   }, []);
@@ -48,19 +45,17 @@ function App() {
   const currentCourses = isSimulating ? simCourses : realCourses;
   const setCurrentCourses = isSimulating ? setSimCourses : setRealCourses;
 
-  // 2. Hàm Lưu chuyên dụng: LƯU KÈM MSSV ĐỂ ADMIN DỄ QUẢN LÝ
   const saveToFirebase = (updatedList) => {
     if (user && !isSimulating) {
       const mssv = user.email.split('@')[0].toUpperCase();
       setDoc(doc(db, 'users', user.uid), { 
-        mssv: mssv,             // Dữ liệu mới thêm cho Admin xem
+        mssv: mssv,             
         email: user.email,
-        courses: updatedList    // Danh sách điểm
+        courses: updatedList    
       });
     }
   };
 
-  // 3. Chỉ lưu khi người dùng thực sự bấm THÊM MÔN
   const handleAddCourse = (newCourseData) => {
     const existingIndex = currentCourses.findIndex(c => c.code === newCourseData.code);
     let updatedList = [...currentCourses];
@@ -71,14 +66,13 @@ function App() {
     }
     
     setCurrentCourses(updatedList);
-    saveToFirebase(updatedList); // Đẩy lên Firebase
+    saveToFirebase(updatedList);
   };
 
-  // 4. Chỉ lưu khi người dùng thực sự bấm XÓA MÔN
   const handleDelete = (id) => {
     const updatedList = currentCourses.filter(c => c.id !== id);
     setCurrentCourses(updatedList);
-    saveToFirebase(updatedList); // Đẩy lên Firebase
+    saveToFirebase(updatedList);
   };
 
   const groupedBySemester = currentCourses.reduce((acc, course) => {
@@ -96,8 +90,11 @@ function App() {
       semPoints += c.credits * GRADE_MAP[c.grade];
     });
     accCredits += semCredits; accPoints += semPoints;
+    
+    const formattedSem = sem.length === 5 ? `${sem.slice(0, 4)}.${sem.slice(4)}` : sem;
+
     return {
-      name: `Kỳ ${sem}`,
+      name: `Kỳ ${formattedSem}`,
       GPA: semCredits > 0 ? Number((semPoints / semCredits).toFixed(2)) : 0,
       CPA: accCredits > 0 ? Number((accPoints / accCredits).toFixed(2)) : 0
     };
@@ -164,7 +161,6 @@ function App() {
           </div>
         )}
         
-        {/* Đã thêm bộ TargetSetter vào tab CPA */}
         {activeTab === 'cpa' && (
           <div className="animate-fade-in space-y-6">
             <Overview type="CPA" score={finalCPA} chartData={chartData} isSimulating={isSimulating} />
