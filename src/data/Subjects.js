@@ -4,7 +4,7 @@ export const GRADE_MAP = {
 };
 
 export const COURSE_DB = [
-  { code: 'IT1110', name: 'Tin học đại cương', credits: 4 },
+  { code: 'IT1108', name: 'Nhập môn lập trình', credits: 4 },
   { code: 'MI1111', name: 'Giải tích 1', credits: 4 },
   { code: 'MI2020', name: 'Xác suất thống kê', credits: 3 },
   { code: 'IT3011', name: 'Cấu trúc dữ liệu và giải thuật', credits: 3 },
