@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title>HUST</title>
+  <circle cx="64" cy="64" r="58" fill="#a6192e"/>
+  <circle cx="64" cy="64" r="48" fill="none" stroke="#fff" stroke-width="3"/>
+  <path fill="#fff" d="M38 36h10v22h16V36h10v22h16V36h10v56H80V70H64v22H54V70H38V92H28V36h10zm52 0h10v56H90z"/>
+  <text x="64" y="108" fill="#fff" font-family="Arial, sans-serif" font-size="10" font-weight="700" text-anchor="middle">HUST</text>
+</svg>
