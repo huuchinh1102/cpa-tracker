@@ -44,8 +44,12 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-700 via-red-600 to-yellow-500 font-sans p-4">
       <div className="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-600 mb-4 shadow-sm">
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0v6m0-6l-9 5m9-5l9 5"></path></svg>
+          <div className="flex justify-center mb-6">
+            <img
+              src="/Logo_Đại_học_Bách_Khoa_Hà_Nội.svg"
+              alt="Logo Đại học Bách khoa Hà Nội"
+              className="h-24 w-auto object-contain drop-shadow-md"
+            />
           </div>
           <h1 className="text-3xl font-extrabold text-gray-800 mb-2">HUST CPA Tracker</h1>
           <p className="text-gray-500 font-medium">
