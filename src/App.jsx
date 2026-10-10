@@ -34,9 +34,6 @@ function App() {
           setSimCourses([]);
           setIsSimulating(false);
         }
-      } else {
-        setUser(null);
-        setRealCourses([]);
       } finally {
         setIsDataLoaded(true);
       }
@@ -91,11 +88,12 @@ function App() {
       semCredits += c.credits;
       semPoints += c.credits * GRADE_MAP[c.grade];
     });
-    accCredits += semCredits; accPoints += semPoints;
+    const accCredits = previous.accCredits + semCredits;
+    const accPoints = previous.accPoints + semPoints;
     
     const formattedSem = sem.length === 5 ? `${sem.slice(0, 4)}.${sem.slice(4)}` : sem;
 
-    return {
+    data.push({
       name: `Kỳ ${formattedSem}`,
       GPA: semCredits > 0 ? Number((semPoints / semCredits).toFixed(2)) : 0,
       CPA: accCredits > 0 ? Number((accPoints / accCredits).toFixed(2)) : 0
@@ -167,10 +165,6 @@ function App() {
           </div>
         )}
         
- feature/update-ui
-
-        {/* Đã thêm bộ TargetSetter vào tab CPA */}
- main
         {activeTab === 'cpa' && (
           <div className="animate-fade-in space-y-6">
             <Overview type="CPA" score={finalCPA} chartData={chartData} isSimulating={isSimulating} />
