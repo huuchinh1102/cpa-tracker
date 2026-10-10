@@ -12,5 +12,5 @@ export const COURSE_DB = [
   { code: 'IT3120', name: 'Phân tích thiết kế hệ thống', credits: 3 },
   { code: 'IT3070', name: 'Nguyên lý Hệ điều hành', credits: 3 },
   { code: 'IT4110', name: 'IoT và Ứng dụng', credits: 3 },
-  { code: 'IT4142E', name: 'Big Data Processing', credits: 3 },
+  { code: 'IT4142E', name: 'Lưu trữ và xử lí dữ liệu lớn', credits: 3 },
 ];

@@ -34,9 +34,6 @@ function App() {
           setSimCourses([]);
           setIsSimulating(false);
         }
-      } catch (error) {
-        console.error('Không thể tải dữ liệu người dùng:', error);
-        setRealCourses([]);
       } finally {
         setIsDataLoaded(true);
       }
