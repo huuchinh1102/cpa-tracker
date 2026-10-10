@@ -5,11 +5,30 @@ import Login from './components/Login';
 import Overview from './components/Overview';
 import CourseForm from './components/CourseForm';
 import SemesterList from './components/SemesterList';
+import Sidebar from './components/Sidebar';               // Thêm dòng này
+import ScholarshipList from './components/ScholarshipList'; // Thêm dòng này
 
 // Import Firebase
 import { auth, db } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+
+const normalizeCourses = (courses) => {
+  if (!Array.isArray(courses)) return [];
+
+  return courses.filter((course) => (
+    course &&
+    typeof course.code === 'string' &&
+    typeof course.name === 'string' &&
+    typeof course.semester === 'string' &&
+    Number.isFinite(Number(course.credits)) &&
+    typeof course.grade === 'string' &&
+    GRADE_MAP[course.grade] !== undefined
+  )).map((course) => ({
+    ...course,
+    credits: Number(course.credits),
+  }));
+};
 
 function App() {
   const [user, setUser] = useState(null);
@@ -19,6 +38,9 @@ function App() {
   const [isSimulating, setIsSimulating] = useState(false);
   const [simCourses, setSimCourses] = useState([]);
   const [activeTab, setActiveTab] = useState('input');
+  
+  // State mới để điều khiển việc hiển thị màn hình chính
+  const [mainView, setMainView] = useState('home');
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -27,13 +49,16 @@ function App() {
           setUser(currentUser);
           const docRef = doc(db, 'users', currentUser.uid);
           const docSnap = await getDoc(docRef);
-          setRealCourses(docSnap.exists() ? docSnap.data().courses || [] : []);
+          setRealCourses(normalizeCourses(docSnap.exists() ? docSnap.data().courses : []));
         } else {
           setUser(null);
           setRealCourses([]);
           setSimCourses([]);
           setIsSimulating(false);
         }
+      } catch (error) {
+        console.error('Không thể tải dữ liệu học tập:', error);
+        setRealCourses([]);
       } finally {
         setIsDataLoaded(true);
       }
@@ -48,7 +73,7 @@ function App() {
     if (user && !isSimulating) {
       const mssv = user.email.split('@')[0].toUpperCase();
       setDoc(doc(db, 'users', user.uid), { 
-        mssv: mssv,             
+        mssv: mssv,            
         email: user.email,
         courses: updatedList    
       });
@@ -86,7 +111,7 @@ function App() {
     let semCredits = 0; let semPoints = 0;
     groupedBySemester[sem].forEach(c => {
       semCredits += c.credits;
-      semPoints += c.credits * GRADE_MAP[c.grade];
+      semPoints += c.credits * (GRADE_MAP[c.grade] ?? 0);
     });
     const accCredits = previous.accCredits + semCredits;
     const accPoints = previous.accPoints + semPoints;
@@ -111,67 +136,83 @@ function App() {
   if (!user) return <Login />;
 
   return (
-    <div className={`min-h-screen p-8 font-sans transition-colors duration-500 ${isSimulating ? 'bg-orange-50' : 'bg-gray-100'}`}>
-      <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl p-8 border-t-8 border-t-red-600">
-        
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-6 mb-8 gap-4">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-bold text-xl uppercase">
-              {user.email.split('@')[0].substring(0, 2)}
-            </div>
-            <div>
-              <h1 className="text-3xl font-extrabold text-gray-800">CPA Tracker</h1>
-              <p className="text-sm text-gray-500 mt-1">MSSV: <span className="font-bold text-gray-700 uppercase">{user.email.split('@')[0]}</span></p>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => {
-                if (!isSimulating) setSimCourses([...realCourses]);
-                setIsSimulating(!isSimulating);
-              }}
-              className={`px-6 py-2.5 rounded-xl font-bold shadow-sm transition-all transform hover:scale-105 ${isSimulating ? 'bg-orange-500 text-white shadow-orange-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-            >
-              {isSimulating ? '🛠 Đang Mô Phỏng' : 'Bật Mô Phỏng'}
-            </button>
-            <button 
-              onClick={() => signOut(auth)}
-              className="text-gray-400 hover:text-red-500 font-medium p-2 transition-colors" title="Đăng xuất"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-            </button>
-          </div>
-        </div>
+    // Bọc toàn bộ vào một thẻ div chia layout cột: Sidebar trái, Nội dung phải
+    <div className={`flex h-screen overflow-hidden font-sans transition-colors duration-500 ${isSimulating ? 'bg-orange-50' : 'bg-gray-100'}`}>
+      
+      {/* Component Sidebar mới */}
+      <Sidebar currentView={mainView} setView={setMainView} />
 
-        <div className="flex gap-2 mb-8 bg-gray-50 p-2 rounded-xl border border-gray-100 shadow-inner">
-          {['input', 'gpa', 'cpa'].map(tab => (
-            <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-3 font-bold rounded-lg transition-all ${activeTab === tab ? 'bg-white shadow text-red-600' : 'text-gray-500 hover:bg-gray-200'}`}>
-              {tab === 'input' ? '📝 Quản Lý Điểm' : tab === 'gpa' ? '📈 Phân Tích GPA' : '🎓 Phân Tích CPA'}
-            </button>
-          ))}
-        </div>
+      {/* Vùng nội dung chính, có thể cuộn độc lập */}
+      <main className="flex-1 h-full overflow-y-auto p-8">
+        
+        {/* Hiển thị Tracker cũ nếu đang chọn Trang chủ */}
+        {mainView === 'home' && (
+          <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl p-8 border-t-8 border-t-red-600">
+            
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-6 mb-8 gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-bold text-xl uppercase">
+                  {user.email.split('@')[0].substring(0, 2)}
+                </div>
+                <div>
+                  <h1 className="text-3xl font-extrabold text-gray-800">CPA Tracker</h1>
+                  <p className="text-sm text-gray-500 mt-1">MSSV: <span className="font-bold text-gray-700 uppercase">{user.email.split('@')[0]}</span></p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-4">
+                <button 
+                  onClick={() => {
+                    if (!isSimulating) setSimCourses([...realCourses]);
+                    setIsSimulating(!isSimulating);
+                  }}
+                  className={`px-6 py-2.5 rounded-xl font-bold shadow-sm transition-all transform hover:scale-105 ${isSimulating ? 'bg-orange-500 text-white shadow-orange-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                >
+                  {isSimulating ? '🛠 Đang Mô Phỏng' : 'Bật Mô Phỏng'}
+                </button>
+                <button 
+                  onClick={() => signOut(auth)}
+                  className="text-gray-400 hover:text-red-500 font-medium p-2 transition-colors" title="Đăng xuất"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                </button>
+              </div>
+            </div>
 
-        {activeTab === 'input' && (
-          <div className="animate-fade-in">
-            <CourseForm isSimulating={isSimulating} onAdd={handleAddCourse} />
-            <SemesterList sortedSemesters={sortedSemesters} groupedBySemester={groupedBySemester} chartData={chartData} isSimulating={isSimulating} onDelete={handleDelete} />
+            <div className="flex gap-2 mb-8 bg-gray-50 p-2 rounded-xl border border-gray-100 shadow-inner">
+              {['input', 'gpa', 'cpa'].map(tab => (
+                <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-3 font-bold rounded-lg transition-all ${activeTab === tab ? 'bg-white shadow text-red-600' : 'text-gray-500 hover:bg-gray-200'}`}>
+                  {tab === 'input' ? '📝 Quản Lý Điểm' : tab === 'gpa' ? '📈 Phân Tích GPA' : '🎓 Phân Tích CPA'}
+                </button>
+              ))}
+            </div>
+
+            {activeTab === 'input' && (
+              <div className="animate-fade-in">
+                <CourseForm isSimulating={isSimulating} onAdd={handleAddCourse} />
+                <SemesterList sortedSemesters={sortedSemesters} groupedBySemester={groupedBySemester} chartData={chartData} isSimulating={isSimulating} onDelete={handleDelete} />
+              </div>
+            )}
+            
+            {activeTab === 'gpa' && (
+              <div className="animate-fade-in">
+                 <Overview type="GPA" score={latestGPA} chartData={chartData} isSimulating={isSimulating} />
+              </div>
+            )}
+            
+            {activeTab === 'cpa' && (
+              <div className="animate-fade-in space-y-6">
+                <Overview type="CPA" score={finalCPA} chartData={chartData} isSimulating={isSimulating} />
+                <TargetSetter currentCPA={finalCPA} totalCredits={totalCredits} />
+              </div>
+            )}
           </div>
         )}
+
+        {/* Hiển thị Bảng Học Bổng nếu đang chọn tab Học bổng */}
+        {mainView === 'scholarships' && <ScholarshipList />}
         
-        {activeTab === 'gpa' && (
-          <div className="animate-fade-in">
-             <Overview type="GPA" score={latestGPA} chartData={chartData} isSimulating={isSimulating} />
-          </div>
-        )}
-        
-        {activeTab === 'cpa' && (
-          <div className="animate-fade-in space-y-6">
-            <Overview type="CPA" score={finalCPA} chartData={chartData} isSimulating={isSimulating} />
-            <TargetSetter currentCPA={finalCPA} totalCredits={totalCredits} />
-          </div>
-        )}
-      </div>
+      </main>
     </div>
   );
 }
