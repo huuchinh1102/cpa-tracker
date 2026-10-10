@@ -59,11 +59,15 @@ export default function Overview({ type, score, chartData, isSimulating }) {
               <Tooltip 
                 contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
               />
+ feature/update-ui
               <Legend 
                 align="center" 
                 verticalAlign="bottom" 
                 wrapperStyle={{ paddingTop: '20px', paddingLeft: '30px' }} 
               />
+
+              <Legend wrapperStyle={{ paddingTop: '20px' }} />
+main
               <Line 
                 type="linear" 
                 dataKey={type} 
