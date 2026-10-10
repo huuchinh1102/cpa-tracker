@@ -9,7 +9,9 @@ export default function SemesterList({ sortedSemesters, groupedBySemester, chart
         <div key={sem} className="mb-6 border rounded-lg overflow-hidden shadow-sm">
           <div className="bg-gray-100 p-3 font-bold text-gray-700 flex justify-between">
             <span>Học kỳ {sem}</span>
-            <span className="text-blue-600">GPA Kỳ: {chartData.find(d => d.name === `Kỳ ${sem}`).GPA.toFixed(2)}</span>
+            <span className="text-blue-600">
+              GPA Kỳ: {chartData.find(d => d.name === `Kỳ ${sem.length === 5 ? `${sem.slice(0, 4)}.${sem.slice(4)}` : sem}`)?.GPA.toFixed(2) || '0.00'}
+            </span>
           </div>
           <table className="w-full text-left border-collapse">
             <tbody>

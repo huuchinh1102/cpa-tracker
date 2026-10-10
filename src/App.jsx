@@ -22,22 +22,24 @@ function App() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-        const docRef = doc(db, 'users', currentUser.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setRealCourses(docSnap.data().courses || []);
+      try {
+        if (currentUser) {
+          setUser(currentUser);
+          const docRef = doc(db, 'users', currentUser.uid);
+          const docSnap = await getDoc(docRef);
+          setRealCourses(docSnap.exists() ? docSnap.data().courses || [] : []);
         } else {
+          setUser(null);
           setRealCourses([]);
+          setSimCourses([]);
+          setIsSimulating(false);
         }
-      } else {
-        setUser(null);
+      } catch (error) {
+        console.error('Không thể tải dữ liệu người dùng:', error);
         setRealCourses([]);
-        setSimCourses([]);
-        setIsSimulating(false);
+      } finally {
+        setIsDataLoaded(true);
       }
-      setIsDataLoaded(true);
     });
     return () => unsubscribe();
   }, []);
@@ -82,26 +84,31 @@ function App() {
   }, {});
   const sortedSemesters = Object.keys(groupedBySemester).sort();
 
-  let accCredits = 0; let accPoints = 0;
-  const chartData = sortedSemesters.map(sem => {
+  const chartData = sortedSemesters.reduce((data, sem) => {
+    const previous = data[data.length - 1] || { accCredits: 0, accPoints: 0 };
     let semCredits = 0; let semPoints = 0;
     groupedBySemester[sem].forEach(c => {
       semCredits += c.credits;
       semPoints += c.credits * GRADE_MAP[c.grade];
     });
-    accCredits += semCredits; accPoints += semPoints;
+    const accCredits = previous.accCredits + semCredits;
+    const accPoints = previous.accPoints + semPoints;
     
     const formattedSem = sem.length === 5 ? `${sem.slice(0, 4)}.${sem.slice(4)}` : sem;
 
-    return {
+    data.push({
       name: `Kỳ ${formattedSem}`,
       GPA: semCredits > 0 ? Number((semPoints / semCredits).toFixed(2)) : 0,
       CPA: accCredits > 0 ? Number((accPoints / accCredits).toFixed(2)) : 0
-    };
-  });
+    });
+    data[data.length - 1].accCredits = accCredits;
+    data[data.length - 1].accPoints = accPoints;
+    return data;
+  }, []);
 
   const finalCPA = chartData.length > 0 ? chartData[chartData.length - 1].CPA : 0;
   const latestGPA = chartData.length > 0 ? chartData[chartData.length - 1].GPA : 0;
+  const totalCredits = chartData.length > 0 ? chartData[chartData.length - 1].accCredits : 0;
 
   if (!isDataLoaded) return <div className="min-h-screen flex items-center justify-center font-bold text-gray-500">Đang tải dữ liệu...</div>;
   if (!user) return <Login />;
@@ -164,7 +171,7 @@ function App() {
         {activeTab === 'cpa' && (
           <div className="animate-fade-in space-y-6">
             <Overview type="CPA" score={finalCPA} chartData={chartData} isSimulating={isSimulating} />
-            <TargetSetter currentCPA={finalCPA} totalCredits={accCredits} />
+            <TargetSetter currentCPA={finalCPA} totalCredits={totalCredits} />
           </div>
         )}
       </div>
