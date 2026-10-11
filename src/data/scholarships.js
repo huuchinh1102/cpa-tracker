@@ -40,8 +40,8 @@ export const SCHOLARSHIP_DATA = [
   { id: 29, major: 'Khoa học dữ liệu (ITE10) - K69', semester: '2024.2', upperBound: 4.0, lowerBound: 4.00, avgGPA: 4.00, upperDRL: 100, lowerDRL: 92, avgDRL: 95.6, count: 5 },
 
   { id: 30, major: 'Kỹ thuật máy tính (IT2) - K67', semester: '2024.2', upperBound: 4.0, lowerBound: 3.71, avgGPA: 3.84, upperDRL: 100, lowerDRL: 90, avgDRL: 94.6, count: 13 },
-  { id: 30, major: 'Kỹ thuật máy tính (IT2) - K68', semester: '2024.2', upperBound: 4.0, lowerBound: 3.92, avgGPA: 3.97, upperDRL: 100, lowerDRL: 93, avgDRL: 94.6, count: 9 },
-  { id: 30, major: 'Kỹ thuật máy tính (IT2) - K69', semester: '2024.2', upperBound: 4.0, lowerBound: 3.84, avgGPA: 3.96, upperDRL: 100, lowerDRL: 92, avgDRL: 94.8, count: 11 },
+  { id: 31, major: 'Kỹ thuật máy tính (IT2) - K68', semester: '2024.2', upperBound: 4.0, lowerBound: 3.92, avgGPA: 3.97, upperDRL: 100, lowerDRL: 93, avgDRL: 94.6, count: 9 },
+  { id: 32, major: 'Kỹ thuật máy tính (IT2) - K69', semester: '2024.2', upperBound: 4.0, lowerBound: 3.84, avgGPA: 3.96, upperDRL: 100, lowerDRL: 92, avgDRL: 94.8, count: 11 },
 
-  { id: 31, major: 'An toàn thông tin (ITE15) - K69', semester: '2024.2', upperBound: 3.82, lowerBound: 3.74, avgGPA: 3.77, upperDRL: 93, lowerDRL: 93, avgDRL: 93.0, count: 3 },
+  { id: 33, major: 'An toàn thông tin (ITE15) - K69', semester: '2024.2', upperBound: 3.82, lowerBound: 3.74, avgGPA: 3.77, upperDRL: 93, lowerDRL: 93, avgDRL: 93.0, count: 3 },
 ];

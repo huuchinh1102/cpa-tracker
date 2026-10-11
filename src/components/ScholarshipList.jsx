@@ -1,7 +1,57 @@
-// src/components/ScholarshipList.jsx
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { SCHOLARSHIP_DATA } from '../data/scholarships';
 import ScholarshipTable from './ScholarshipTable';
+
+const vietnameseCollator = new Intl.Collator('vi', {
+  numeric: true,
+  sensitivity: 'base',
+});
+function compareScholarships(first, second, key, direction) {
+  let comparison = 0;
+
+  // 1. So sánh tiêu chí chính
+  if (key === 'major') {
+    comparison = vietnameseCollator.compare(first.major ?? '', second.major ?? '');
+  } else if (key === 'semester') {
+    const [firstYear = 0, firstTerm = 0] = String(first.semester ?? '').split('.').map(Number);
+    const [secondYear = 0, secondTerm = 0] = String(second.semester ?? '').split('.').map(Number);
+    comparison = (firstYear - secondYear) || (firstTerm - secondTerm);
+  } else {
+    const firstValue = Number(first[key]);
+    const secondValue = Number(second[key]);
+
+    if (!Number.isNaN(firstValue) && !Number.isNaN(secondValue)) {
+      comparison = firstValue - secondValue;
+    } else {
+      comparison = vietnameseCollator.compare(String(first[key] ?? ''), String(second[key] ?? ''));
+    }
+  }
+
+  // Nếu tiêu chí chính có sự chênh lệch -> Áp dụng chiều sort (asc/desc)
+  if (comparison !== 0) {
+    return direction === 'asc' ? comparison : -comparison;
+  }
+
+  // 2. TIE-BREAKER: Nếu tiêu chí chính bằng nhau (Ví dụ GPA đều 4.0) 
+  // -> Áp dụng luật cố định, KHÔNG bị lật ngược bởi tham số 'direction'
+
+  // Ưu tiên 1: Xếp kỳ học mới nhất lên trước
+  if (key !== 'semester') {
+    const [fY = 0, fT = 0] = String(first.semester ?? '').split('.').map(Number);
+    const [sY = 0, sT = 0] = String(second.semester ?? '').split('.').map(Number);
+    const semComparison = (sY - fY) || (sT - fT);
+    if (semComparison !== 0) return semComparison;
+  }
+
+  // Ưu tiên 2: Tên Ngành A->Z
+  if (key !== 'major') {
+    const majorComparison = vietnameseCollator.compare(first.major ?? '', second.major ?? '');
+    if (majorComparison !== 0) return majorComparison;
+  }
+
+  // Chốt chặn cuối: Tránh lỗi trùng lặp hoàn toàn
+  return (first.id ?? 0) - (second.id ?? 0);
+}
 
 export default function ScholarshipList() {
   const [sortConfig, setSortConfig] = useState({ key: 'semester', direction: 'desc' });
@@ -29,9 +79,15 @@ export default function ScholarshipList() {
   }, []);
 
   const requestSort = (key) => {
-    let direction = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') direction = 'desc';
-    setSortConfig({ key, direction });
+    setSortConfig((prevConfig) => {
+      // Nếu click lại đúng cột cũ -> Đảo chiều
+      if (prevConfig.key === key) {
+        return { key, direction: prevConfig.direction === 'asc' ? 'desc' : 'asc' };
+      }
+      // Click cột mới -> Mặc định chữ cái thì ASC, điểm số thì DESC
+      const defaultDirection = key === 'major' ? 'asc' : 'desc';
+      return { key, direction: defaultDirection };
+    });
   };
 
   const toggleMajor = (major) => {
@@ -48,7 +104,7 @@ export default function ScholarshipList() {
     );
   }, [allUniqueMajors, searchTerm]);
 
-  // Logic: Lọc và Sắp xếp data truyền xuống Table
+  // Logic: Lọc và Sắp xếp data
   const processedData = useMemo(() => {
     let filtered = SCHOLARSHIP_DATA.filter(item => selectedMajors.includes(item.major));
     
@@ -56,23 +112,17 @@ export default function ScholarshipList() {
       filtered = filtered.filter(item => item.semester === selectedSemester);
     }
 
-    filtered.sort((a, b) => {
-      if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
-      if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
-      return 0;
-    });
+    // ĐÃ FIX: Bắt buộc dùng [...filtered] để tạo mảng mới, ép React phải render lại bảng
+    return [...filtered].sort((a, b) => compareScholarships(a, b, sortConfig.key, sortConfig.direction));
 
-    return filtered;
   }, [selectedMajors, selectedSemester, sortConfig]);
 
   return (
     <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-xl p-8 border-t-8 border-t-red-600 animate-fade-in pb-16">
       
-      {/* Header và Toolbar Lọc */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
-          <h2 className="text-3xl font-extrabold text-gray-800">Tra cứu Học bổng (Nhóm Ngành)</h2>
-          <p className="text-sm text-gray-500 mt-1">So sánh điểm GPA & ĐRL chuẩn học bổng qua từng học kỳ</p>
+          <h2 className="text-3xl font-extrabold text-gray-800">Học bổng</h2>
         </div>
         
         <div className="flex gap-3 items-center">
@@ -142,7 +192,6 @@ export default function ScholarshipList() {
         </div>
       </div>
 
-      {/* Gọi Component Table và truyền Props xuống */}
       <ScholarshipTable 
         data={processedData} 
         sortConfig={sortConfig} 
