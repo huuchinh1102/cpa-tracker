@@ -1,4 +1,3 @@
-// src/components/ScholarshipTable.jsx
 
 function SortArrow({ columnKey, sortConfig }) {
   if (sortConfig.key !== columnKey) return <span className="text-gray-300 ml-1">↕</span>;

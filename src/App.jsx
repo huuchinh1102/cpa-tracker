@@ -37,8 +37,6 @@ function App() {
   
   const [isSimulating, setIsSimulating] = useState(false);
   const [simCourses, setSimCourses] = useState([]);
-  const [activeTab, setActiveTab] = useState('input');
-  
   // State mới để điều khiển việc hiển thị màn hình chính
   const [mainView, setMainView] = useState('home');
 
@@ -131,6 +129,7 @@ function App() {
   const finalCPA = chartData.length > 0 ? chartData[chartData.length - 1].CPA : 0;
   const latestGPA = chartData.length > 0 ? chartData[chartData.length - 1].GPA : 0;
   const totalCredits = chartData.length > 0 ? chartData[chartData.length - 1].accCredits : 0;
+  const totalPoints = chartData.length > 0 ? chartData[chartData.length - 1].accPoints : 0;
 
   if (!isDataLoaded) return <div className="min-h-screen flex items-center justify-center font-bold text-gray-500">Đang tải dữ liệu...</div>;
   if (!user) return <Login />;
@@ -145,7 +144,7 @@ function App() {
       {/* Vùng nội dung chính, có thể cuộn độc lập */}
       <main className="flex-1 h-full overflow-y-auto p-8">
         
-        {/* Hiển thị Tracker cũ nếu đang chọn Trang chủ */}
+        {/* Trang chủ chỉ tập trung vào quản lý điểm */}
         {mainView === 'home' && (
           <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl p-8 border-t-8 border-t-red-600">
             
@@ -179,33 +178,35 @@ function App() {
               </div>
             </div>
 
+            <div className="animate-fade-in">
+              <CourseForm isSimulating={isSimulating} onAdd={handleAddCourse} />
+              <SemesterList sortedSemesters={sortedSemesters} groupedBySemester={groupedBySemester} chartData={chartData} isSimulating={isSimulating} onDelete={handleDelete} />
+            </div>
+          </div>
+        )}
+
+        {mainView.startsWith('results-') && (
+          <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl p-8 border-t-8 border-t-red-600">
+            <div className="border-b pb-6 mb-8">
+              <h1 className="text-3xl font-extrabold text-gray-800">Kết quả học tập</h1>
+              <p className="text-sm text-gray-500 mt-1">Theo dõi và cải thiện kết quả học tập của bạn</p>
+            </div>
+
             <div className="flex gap-2 mb-8 bg-gray-50 p-2 rounded-xl border border-gray-100 shadow-inner">
-              {['input', 'gpa', 'cpa'].map(tab => (
-                <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-3 font-bold rounded-lg transition-all ${activeTab === tab ? 'bg-white shadow text-red-600' : 'text-gray-500 hover:bg-gray-200'}`}>
-                  {tab === 'input' ? '📝 Quản Lý Điểm' : tab === 'gpa' ? '📈 Phân Tích GPA' : '🎓 Phân Tích CPA'}
+              {[
+                ['results-gpa', '📈 Phân tích GPA'],
+                ['results-cpa', '🎓 Phân tích CPA'],
+                ['results-strategy', '🎯 Chiến lược học tập'],
+              ].map(([view, label]) => (
+                <button key={view} onClick={() => setMainView(view)} className={`flex-1 py-3 font-bold rounded-lg transition-all ${mainView === view ? 'bg-white shadow text-red-600' : 'text-gray-500 hover:bg-gray-200'}`}>
+                  {label}
                 </button>
               ))}
             </div>
 
-            {activeTab === 'input' && (
-              <div className="animate-fade-in">
-                <CourseForm isSimulating={isSimulating} onAdd={handleAddCourse} />
-                <SemesterList sortedSemesters={sortedSemesters} groupedBySemester={groupedBySemester} chartData={chartData} isSimulating={isSimulating} onDelete={handleDelete} />
-              </div>
-            )}
-            
-            {activeTab === 'gpa' && (
-              <div className="animate-fade-in">
-                 <Overview type="GPA" score={latestGPA} chartData={chartData} isSimulating={isSimulating} />
-              </div>
-            )}
-            
-            {activeTab === 'cpa' && (
-              <div className="animate-fade-in space-y-6">
-                <Overview type="CPA" score={finalCPA} chartData={chartData} isSimulating={isSimulating} />
-                <TargetSetter currentCPA={finalCPA} totalCredits={totalCredits} />
-              </div>
-            )}
+            {mainView === 'results-gpa' && <div className="animate-fade-in"><Overview type="GPA" score={latestGPA} chartData={chartData} isSimulating={isSimulating} /></div>}
+            {mainView === 'results-cpa' && <div className="animate-fade-in"><Overview type="CPA" score={finalCPA} chartData={chartData} isSimulating={isSimulating} /></div>}
+            {mainView === 'results-strategy' && <div className="animate-fade-in"><TargetSetter currentCPA={finalCPA} totalCredits={totalCredits} totalPoints={totalPoints} /></div>}
           </div>
         )}
 

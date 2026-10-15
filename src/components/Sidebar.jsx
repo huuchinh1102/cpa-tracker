@@ -1,4 +1,6 @@
 export default function Sidebar({ currentView, setView }) {
+  const isResultsView = currentView.startsWith('results-');
+
   return (
     <div className="w-48 bg-white border-r border-gray-200 shadow-sm flex flex-col h-full">
       <div className="p-6 border-b border-gray-100 flex items-center justify-center">
@@ -24,6 +26,14 @@ export default function Sidebar({ currentView, setView }) {
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0v6m0-6l-9 5m9-5l9 5"></path></svg>
           Học bổng
+        </button>
+
+        <button
+          onClick={() => setView('results-gpa')}
+          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${isResultsView ? 'bg-red-50 text-red-600' : 'text-gray-500 hover:bg-gray-100'}`}
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19V6l12-3v13M9 19c0 1.657-1.79 3-4 3s-4-1.343-4-3 1.79-3 4-3 4 1.343 4 3zm12-3c0 1.657-1.79 3-4 3s-4-1.343-4-3 1.79-3 4-3 4 1.343 4 3z" /></svg>
+          Kết quả học tập
         </button>
       </nav>
     </div>
