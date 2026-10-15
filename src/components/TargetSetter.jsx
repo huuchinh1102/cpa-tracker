@@ -1,6 +1,8 @@
 import { useState } from 'react';
 
-export default function TargetSetter({ currentCPA, totalCredits }) {
+const roundToTwo = (value) => Math.round((value + 1e-9) * 100) / 100;
+
+export default function TargetSetter({ currentCPA, totalCredits, totalPoints }) {
   const [targetCPA, setTargetCPA] = useState('');
   const [nextCredits, setNextCredits] = useState(15);
 
@@ -12,11 +14,15 @@ export default function TargetSetter({ currentCPA, totalCredits }) {
     
     if (isNaN(target) || isNaN(credits) || credits <= 0) return null;
 
-    // Tính toán và LÀM TRÒN 2 chữ số để khắc phục lỗi sai số thập phân của JS (Đã được khôi phục)
-    const rawRequiredGPA = ((target * (totalCredits + credits)) - (currentCPA * totalCredits)) / credits;
-    const roundedRequiredGPA = Number(rawRequiredGPA.toFixed(2));
+    const exactCurrentCPA = totalCredits > 0 && Number.isFinite(totalPoints)
+      ? totalPoints / totalCredits
+      : currentCPA;
+    const displayedTarget = roundToTwo(target);
+    const roundingThreshold = displayedTarget - 0.005;
+    const rawRequiredGPA = ((roundingThreshold * (totalCredits + credits)) - (exactCurrentCPA * totalCredits)) / credits;
+    const roundedRequiredGPA = roundToTwo(rawRequiredGPA);
     
-    if (target <= currentCPA) {
+    if (displayedTarget <= roundToTwo(exactCurrentCPA)) {
       return { 
         status: 'easy', 
         color: 'bg-green-50 text-green-700 border-green-200',
@@ -24,20 +30,21 @@ export default function TargetSetter({ currentCPA, totalCredits }) {
       };
     }
 
-    if (roundedRequiredGPA > 4.0) {
-      // Tính điểm tối đa có thể đạt được nếu kỳ tới full A
-      const maxPossibleCPA = ((currentCPA * totalCredits) + (4.0 * credits)) / (totalCredits + credits);
+    const maxPossibleCPA = ((exactCurrentCPA * totalCredits) + (4.0 * credits)) / (totalCredits + credits);
+    const roundedMaxPossibleCPA = roundToTwo(maxPossibleCPA);
+
+    if (roundedMaxPossibleCPA < displayedTarget) {
       return { 
         status: 'impossible', 
         color: 'bg-red-50 text-red-700 border-red-200',
-        message: `Mission Impossible! Dù kỳ tới bạn có đạt full A (4.0), CPA cao nhất chỉ lên được ${maxPossibleCPA.toFixed(2)}. Bạn cần học nhiều hơn ${credits} tín chỉ hoặc hạ mục tiêu xuống một chút.` 
+        message: `Mission Impossible! Dù kỳ tới bạn có đạt full A (4.0), CPA cao nhất chỉ lên được ${roundedMaxPossibleCPA.toFixed(2)}. Bạn cần học nhiều hơn ${credits} tín chỉ hoặc hạ mục tiêu xuống một chút.` 
       };
     }
 
     return { 
       status: 'possible', 
       color: 'bg-blue-50 text-blue-700 border-blue-200',
-      message: `Khả thi! Với dự định học ${credits} tín chỉ kỳ tới, bạn cần đạt điểm tổng kết (GPA) học kỳ tối thiểu là ${roundedRequiredGPA.toFixed(2)} để kéo CPA lên ${target}.` 
+      message: `Khả thi! Với dự định học ${credits} tín chỉ kỳ tới, bạn cần đạt điểm tổng kết (GPA) học kỳ tối thiểu là ${roundedRequiredGPA.toFixed(2)} để kéo CPA lên ${displayedTarget.toFixed(2)}.` 
     };
   };
 
