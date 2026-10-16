@@ -16,6 +16,7 @@ export const COURSE_DB = [
   { code: 'ET3262', name: 'Tư duy công nghệ và thiết kế kỹ thuật', credits: 2 },
   { code: 'ME3123', name: 'Thiết kế mỹ thuật công nghiệp', credits: 2 },
   { code: 'ME3124', name: 'Thiết kế quảng bá sản phẩm', credits: 2 },
+  { code: 'MI1111', name: 'Giải tích I', credits: 4 },
   { code: 'MI1111E', name: 'Giải tích I', credits: 4 },
   { code: 'MI1114', name: 'Giải tích 1', credits: 3 },
   { code: 'MI1114E', name: 'Giải tích 1', credits: 3 },
