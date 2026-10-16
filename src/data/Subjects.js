@@ -53,6 +53,7 @@ export const COURSE_DB = [
   // ==========================================
   { code: 'IT1110', name: 'Tin học đại cương', credits: 4 },
   { code: 'IT1110E', name: 'Nhập môn lập trình', credits: 4 },
+  { code: 'IT1108', name: 'Nhập môn lập trình', credits: 4 },
   { code: 'IT2000', name: 'Nhập môn CNTT và TT', credits: 3 },
   { code: 'IT2022', name: 'Thống kê ứng dụng và quy hoạch thực nghiệm', credits: 3 },
   { code: 'IT2022E', name: 'Thống kê ứng dụng và phân tích thực nghiệm', credits: 3 },
