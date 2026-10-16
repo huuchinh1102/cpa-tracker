@@ -54,11 +54,15 @@ export default function CourseForm({ isSimulating, onAdd }) {
       >
         <option value="20231">Kỳ 2023.1</option>
         <option value="20232">Kỳ 2023.2</option>
+        <option value="20233">Kỳ 2023.3</option>
         <option value="20241">Kỳ 2024.1</option>
         <option value="20242">Kỳ 2024.2</option>
+        <option value="20242">Kỳ 2024.3</option>
         <option value="20251">Kỳ 2025.1</option>
         <option value="20252">Kỳ 2025.2</option>
+        <option value="20253">Kỳ 2025.3</option>
         <option value="20261">Kỳ 2026.1</option>
+        <option value="20262">Kỳ 2026.2</option>
       </select>
 
       <div className="flex-1 relative" ref={searchRef}>
